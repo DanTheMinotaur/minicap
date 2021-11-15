@@ -18,6 +18,7 @@ package io.devicefarmer.minicap.provider
 import android.graphics.Rect
 import android.media.ImageReader
 import android.net.LocalSocket
+import android.os.Build
 import android.os.Handler
 import android.os.IBinder
 import android.os.Looper
@@ -96,7 +97,10 @@ class SurfaceProvider(targetSize: Size, orientation: Int) : BaseProvider(targetS
     private fun initSurface(l: ImageReader.OnImageAvailableListener) {
         log.info("Initialising surface provider")
         //must be done on the main thread
-        display = SurfaceControl.createDisplay("minicap", false)
+        // Support  Android 12 (preview),and resolve black screen problem
+        val secure =
+            Build.VERSION.SDK_INT < Build.VERSION_CODES.R || Build.VERSION.SDK_INT == Build.VERSION_CODES.R && "S" != Build.VERSION.CODENAME
+        display = SurfaceControl.createDisplay("minicap", secure)
         //initialise the surface to get the display in the ImageReader
         SurfaceControl.openTransaction()
 
